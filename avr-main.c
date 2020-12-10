@@ -72,7 +72,7 @@ int main(void) {
                 _delay_us(2); //step over start bit into first bit --hand tuned
 
 
-                /*for (uint8_t i = 0; i < 8; i++) { //we've only got 32 clock cycles in between bits
+                for (uint8_t i = 0; i < 8; i++) { //we've only got 32 clock cycles in between bits
                     TCNT1 = 0;
                     dmx_read_val >>= 1; 
                     PINB = 0x04;
@@ -80,52 +80,68 @@ int main(void) {
                         dmx_read_val += 128;
                     }
                     PINB = 0x04;
+                    asm("nop");
                     
-                    while(TCNT1 < 21){} //relies on the loop using 5 cycles
-                }*/
+                    while(TCNT1 < 20){} //relies on the loop using 5 cycles
+                }
                 
-                uint8_t counter = 0;
+                uint8_t counter = 8;
+                uint8_t pinVal = 0x04;
                 
-                asm("LDI R24, 0x04"); //todo: use counter
-                asm("LDI R25, 0x08");   //1 cycle
-                asm("loop: rjmp read_dmx_bit"); //2 cycles
-                asm("dec R25"); //1 cycle
-                asm("brne loop");   //2 cycles
-                asm("rjmp next");
+                //asm("LDI R24, 0x04"); //todo: use counter
+                /*asm("LDI %0, 0x08" "\n\t"   //1 cycle
+                    "loop: rjmp read_dmx_bit" "\n\t" //2 cycles
+                    "dec %1" "\n\t" //1 cycle
+                    "brne loop" "\n\t"   //2 cycles
+                    "rjmp next" "\n\t"
 
-                asm("read_dmx_bit:");
-                asm("    OUT 0x16, R24");
-                asm("    LSR %0" : "=r"(dmx_read_val)); //shift to the right    1 cycle
-                asm("    SBIC 0x16, 3"); //skip add if pin3 isn't high (0x16)   1 cycle if isn't skipped 2 if skipped
-                asm("    SUBI %0, 0x80" : "=r"(dmx_read_val)); //sets highest bit   1 cycle
-                asm("    OUT 0x16, R24");
+                    "read_dmx_bit:" "\n\t"
+                    "OUT 0x16, R24" "\n\t"
+                    "LSR %0" "\n\t" //shift to the right    1 cycle
+                    "SBIC 0x16, 3" "\n\t" //skip add if pin3 isn't high (0x16)   1 cycle if isn't skipped 2 if skipped
+                    "SUBI %0, 0x80" "\n\t" //sets highest bit   1 cycle
+                    "OUT 0x16, R24" "\n\t"
                 
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
-                asm("    nop");
+                    "nop" "\n\t"
+                    : "=r" (dmx_read_val), "+r"(counter));*/
                 
-                asm("next:");
+                
+                /*asm volatile("LDI %1, 0x08" "\n\t"   //1 cycle
+                    "loop: rjmp read_dmx_bit" "\n\t" //2 cycles
+                    "dec %1" "\n\t" //1 cycle
+                    "brne loop" "\n\t"   //2 cycles
+                    "rjmp next" "\n\t"
+
+                    "read_dmx_bit:" "\n\t"
+                    "   OUT 0x16, %2" "\n\t"
+                    "LSR %0" "\n\t" //shift to the right    1 cycle
+                    "SBIC 0x16, 3" "\n\t" //skip add if pin3 isn't high (0x16)   1 cycle if isn't skipped 2 if skipped
+                    "SUBI %0, 0x80" "\n\t" //sets highest bit   1 cycle
+                    "OUT 0x16, %2" "\n\t"
+
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    : "=r" (dmx_read_val), "+r"(counter), "+r"(pinVal));
+                
+                asm("next:");*/
                 
                 if (dmx_read_val > 100) {
                     PORTB = 0x10;
