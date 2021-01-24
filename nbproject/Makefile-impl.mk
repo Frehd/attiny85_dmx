@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=nebelmaschine.X
+PROJECTNAME=attiny85_dmx
 
 # Active Configuration
 DEFAULTCONF=default

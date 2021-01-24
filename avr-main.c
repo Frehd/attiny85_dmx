@@ -82,8 +82,53 @@ int main(void) {
                     PINB = 0x04;
                     asm("nop");
                     
+<<<<<<< Updated upstream
                     while(TCNT1 < 20){} //relies on the loop using 5 cycles
                 }
+=======
+                    while(TCNT1 < 21){} //relies on the loop using 5 cycles
+                }*/
+                
+                uint8_t counter = 0;
+                
+                asm("LDI R24, 0x04"); //todo: use counter
+                asm("LDI %1, 0x08" "\n\t"   //1 cycle
+                    "loop: rjmp read_dmx_bit" "\n\t" //2 cycles
+                    "dec %1" "\n\t" //1 cycle
+                    "brne loop" "\n\t"   //2 cycles
+                    "rjmp next" "\n\t"
+
+                    "read_dmx_bit:" "\n\t"
+                    "OUT 0x16, R24" "\n\t"
+                    "LSR %0" "\n\t" //shift to the right    1 cycle
+                    "SBIC 0x16, 3" "\n\t" //skip add if pin3 isn't high (0x16)   1 cycle if isn't skipped 2 if skipped
+                    "SUBI %0, 0x80" "\n\t" //sets highest bit   1 cycle
+                    "OUT 0x16, R24" "\n\t"
+
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    "nop" "\n\t"
+                    : "=r" (dmx_read_val), "+r"(counter));
+
+                asm("next:");
+>>>>>>> Stashed changes
                 
                 if (dmx_read_val > 100) {
                     PORTB = 0x10;
